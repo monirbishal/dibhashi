@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>YouTube to Bengali Audio Converter</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='dist/output.css') }}">
+</head>
+<body class="bg-gray-100 p-6">
+    <div class="max-w-xl mx-auto bg-white p-8 rounded shadow">
+        <h1 class="text-2xl font-bold mb-4">YouTube to Bengali Audio Converter</h1>
+        <form action="/" method="post" class="space-y-4">
+            <input type="text" name="youtube_url" placeholder="Enter YouTube URL" class="w-full border p-2 rounded" required>
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Convert</button>
+        </form>
+        {% if error %}
+            <code class="mt-4 text-red-600">{{ error }}</code>
+        {% endif %}
+
+        {% if transcription %}
+            <h2>Transcription:</h2>
+            <p>{{ transcription }}</p>
+        {% endif %}
+        {% if audio %}
+            <audio controls>
+                <source src="{{ url_for('static', filename='downloads/trimmed_audio.mp3') }}" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        {% endif %}
+
+
+        {% if bn_text %}
+            <h2>Bangla translation:</h2>
+            <p>{{ bn_text }}</p>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,28 @@
+[project]
+name = "dibhashi"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "monirbishal",email = "monirbishal1@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "flask (>=3.1.1,<4.0.0)",
+    "pytube (>=15.0.0,<16.0.0)",
+    "ffmpeg (>=1.4,<2.0)",
+    "yt-dlp (>=2025.5.22,<2026.0.0)",
+    "torch (>=2.7.0,<3.0.0)",
+    "sentencepiece (>=0.2.0,<0.3.0)",
+    "sacremoses (>=0.1.1,<0.2.0)"
+]
+
+[tool.poetry]
+packages = [{include = "dibhashi", from = "src"}]
+
+[tool.poetry.scripts]
+my-script = "dibhashi.app:main"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
