@@ -18,7 +18,8 @@ def transcribe_audio(audio_path):
     asr_pipeline = pipeline(
         "automatic-speech-recognition",
         model="openai/whisper-small",
-        device=device
+        device=device,
+        return_timestamps=True
     )
 
     # Transcribe the audio file

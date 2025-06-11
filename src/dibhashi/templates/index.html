@@ -9,7 +9,7 @@
     <div class="max-w-xl mx-auto bg-white p-8 rounded shadow">
         <h1 class="text-2xl font-bold mb-4">YouTube to Bengali Audio Converter</h1>
         <form action="/" method="post" class="space-y-4">
-            <input type="text" name="youtube_url" placeholder="Enter YouTube URL" class="w-full border p-2 rounded" required>
+            <input type="text" name="media_url" placeholder="Enter YouTube URL" class="w-full border p-2 rounded" required>
             <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Convert</button>
         </form>
         {% if error %}
@@ -23,7 +23,7 @@
 
         {% if audio_path %}
             <audio controls>
-                <source src="{{ url_for('static', filename='downloads/trimmed_audio.mp3') }}" type="audio/mpeg">
+            <source src="{{ url_for('static', filename='downloads/' ~ session_id ~ '/input-trimmed-audio.mp3') }}" type="audio/wav">
                 Your browser does not support the audio element.
             </audio>
         {% endif %}
@@ -37,10 +37,16 @@
         {% if bn_audio_path %}
         {{ bn_audio_path }}
             <audio controls>
-                <source src="{{ url_for('static', filename=bn_audio_path) }}" type="audio/wav">
-                Your browser does not support the audio element.
+            <source src="{{ url_for('static', filename='downloads/' ~ session_id ~ '/output_audio.wav') }}"
+                    type="audio/wav">
+            Your browser doesn’t support audio.
             </audio>
-
+        {% endif %}
+        {% if session_id %}
+            <video width="640" controls>
+                <source src="{{ url_for('static', filename='downloads/' + session_id + '/merged_output.mp4') }}" type="video/mp4">
+                Your browser doesn't support the video tag.
+            </video>
         {% endif %}
     </div>
 </body>

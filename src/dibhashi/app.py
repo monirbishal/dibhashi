@@ -1,9 +1,17 @@
 from flask import Flask, render_template, request
-from dibhashi.utils.download_youtube_audio import download_and_trim_audio
+from dibhashi.utils.download_media import download_and_trim_media
+from dibhashi.utils.bangla_tts import custom_tts
 from dibhashi.utils.transcription import transcribe_audio
 from dibhashi.utils.translation import en_to_bn
 from dibhashi.utils.synthesis import bangla_text_to_speech
+from dibhashi.utils.merge import merge_audio_video
+from dibhashi.utils.utils import make_session_output_dir, get_session_id
+import uuid
 import os
+from dotenv import load_dotenv
+# Define the path to .env file
+env_path = os.path.join(os.path.dirname(__file__), '.env')
+load_dotenv(dotenv_path=env_path)
 
 app = Flask(
     __name__,
@@ -14,34 +22,86 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    error = ""
     if request.method == 'POST':
-        youtube_url = request.form.get('youtube_url')
-        if youtube_url:
+        media_url = request.form.get('media_url')
+        if media_url:
             try:
-                audio_path = download_and_trim_audio(youtube_url)
-                transcription = transcribe_audio(audio_path)
-                bn_text = en_to_bn(transcription)
-                bn_audio_path =  bangla_text_to_speech(bn_text)
-                return render_template('index.html', transcription=transcription, audio_path=audio_path, bn_text=bn_text, bn_audio_path=bn_audio_path)
+                audio_path = ""
+                session_id = get_session_id()
+                output_dir = make_session_output_dir(session_id)
+                media_path = download_and_trim_media(media_url, output_dir)
+                if media_path['audio']:
+                    audio_path = media_path['audio']
+                    transcription = transcribe_audio(audio_path)
+                    if transcription:
+                        bn_text = en_to_bn(transcription)
+                        if bn_text:
+                            bn_audio_path = bangla_text_to_speech(bn_text, output_dir)
+                            # bn_audio_path = custom_tts(bn_text, output_dir, audio_path)
+                            if bn_audio_path:
+                                merge_audio_video(session_id)
+                            else:
+                                error = "Error during merging audio into video."
+                        else:
+                            error = "Error during audio to text."
+                    else:
+                        error = "Error during audio to text."
+                else:
+                    error = "Error during download."
+                return render_template('index.html', error=error,  session_id=session_id, transcription=transcription, audio_path=audio_path, bn_text=bn_text, bn_audio_path=bn_audio_path)
             except Exception as e:
                 error = f'Error: {str(e)}'
                 return render_template('index.html', error=error)
         else:
-            return render_template('index.html', error="No YouTube URL provided.")
+            error="No YouTube URL provided."
     else:
-        return render_template('index.html')
+        return render_template('index.html', error=error)
+
+@app.route('/download', methods=['GET', 'POST'])
+def download():
+    media_url = "https://www.facebook.com/englishwithkrisamerikos/videos/786170160398864/"
+    session_id = uuid.uuid4().hex
+    download_dir = os.getenv("DOWNLOAD_DIR")
+    output_dir = download_dir + "/" + session_id
+    outputs = download_and_trim_media(media_url, output_dir)
+    return outputs
+
+@app.route('/transcribe', methods=['GET'])
+def transcribe():
+    audio_path = "src/dibhashi/static/downloads/fa436f1ee5324122b372a8b7d9ec721a/input-trimmed-audio.mp3"
+    transcription = transcribe_audio(audio_path)
+    return transcription
 
 @app.route('/translate', methods=['GET'])
 def translation():
-    en_text = "Hello English learners and welcome back to EnglishPod. My name is Marco and I'm Erica. How are you, Erica? Marco, I'm doing really well today. You're excited. Uh-huh. We've got a great lesson for everyone. Yes. We have a really common situation where we're going to use real English, right? Yep. Everyday English, English that people really use. And that's what we want you to learn. What are we talking about today specifically? Today we have a really common situation that is a little bit embarrassing."
+    en_text = "Why are you still speaking English like a robot? In today's world, there's so much great technology, apps, chat GPT that can help you learn the language. But they won't make you fluent. The only way to be fluent is to practice speaking with real people. So I've created a presentation that I want to show you. It is short and quick and will explain how to do this fast. And then I have a program where you can"
     bn_text = en_to_bn(en_text)
     return render_template('index.html', transcription=en_text, bn_text=bn_text)
 
-@app.route('/bn-audio', methods=['GET'])
+@app.route('/bn-text-to-audio', methods=['GET'])
 def bn_audio():
-    bn_text = "Hello ইংরেজি শিক্ষার্থীরা আবার ইংরেজিPod-এ স্বাগত জানান । আমার নাম মারকো এবং আমি এরিকা । তুমি কেমন আছ ? মারকো , আমি আজ ভালো করছি । তুমি উত্তেজিত । আমরা সকলের জন্য একটি বড় পাঠ পেয়েছি । হ্যাঁ আমাদের একটি প্রকৃত সাধারণ পরিস্থিতি আছে যেখানে আমরা প্রকৃত ইংরেজি ব্যবহার করতে যাচ্ছি , ডানহাত ? প্রতিদিন ইংরেজি , যে ইংরেজি মানুষ সত্যিই ব্যবহার করতে পারে । এবং আমরা যা শিখতে চাই তা হলো । আজ আমরা এটা সম্বন্ধে খুব ছোট"
-    bn_audio_path =  bangla_text_to_speech(bn_text)
-    return render_template('index.html', bn_text=bn_text, bn_audio_path=bn_audio_path)
+    session_id = get_session_id()
+    output_dir = make_session_output_dir(session_id)
+    reference_audio_path = "src/dibhashi/static/downloads/fa436f1ee5324122b372a8b7d9ec721a/input-trimmed-audio.mp3"
+    bn_text = "তুমি এখনও রোবটের মত ইংরেজি কেন বলছ ? আজকের দিনে অনেক বড় প্রযুক্তি , এ্যাপ , জিপিটি আছে , যা তোমাকে ভাষা শিখতে সাহায্য করতে পারে । কিন্তু তারা তোমাকে স্বতঃস্ফূর্ত করে তুলতে পারে না । একমাত্র উপায় হচ্ছে স্বতঃস্ফূর্ত হওয়া । তাই আমি আপনাকে দেখানোর জন্য একটি উপস্থাপনা তৈরি করেছি । এটি সংক্ষিপ্ত ও দ্রুত কিভাবে করতে হবে । এবং তারপর আমি একটি প্রোগ্রাম আছে যেখানে আপনি পারেন ।"
+    # bn_audio_path = bangla_text_to_speech(bn_text, output_dir)
+    bn_audio_path = custom_tts(bn_text, output_dir, reference_audio_path)
+    # return bn_audio_path
+    return render_template('index.html', session_id=session_id, bn_text=bn_text, bn_audio_path=bn_audio_path)
+
+
+@app.route('/tts', methods=['GET'])
+def getTts():
+    output = custom_tts()
+    return output
+
+@app.route('/watch/<session_id>')
+def watch(session_id):
+    merged_path = merge_audio_video(session_id)
+    # return merged_path
+    return render_template('index.html', session_id=session_id)
+
 
 def main():
     app.run(host="0.0.0.0", port=5002, debug=True)
