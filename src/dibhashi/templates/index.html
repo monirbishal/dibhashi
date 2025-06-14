@@ -1,53 +1,153 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>YouTube to Bengali Audio Converter</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='dist/output.css') }}">
-</head>
-<body class="bg-gray-100 p-6">
-    <div class="max-w-xl mx-auto bg-white p-8 rounded shadow">
-        <h1 class="text-2xl font-bold mb-4">YouTube to Bengali Audio Converter</h1>
-        <form action="/" method="post" class="space-y-4">
-            <input type="text" name="media_url" placeholder="Enter YouTube URL" class="w-full border p-2 rounded" required>
-            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Convert</button>
-        </form>
-        {% if error %}
-            <code class="mt-4 text-red-600">{{ error }}</code>
-        {% endif %}
+{% extends 'layout.html' %}
 
-        {% if transcription %}
-            <h2>Transcription:</h2>
-            <p>{{ transcription }}</p>
-        {% endif %}
+{% block content %}
+<section class="relative text-gray-400 py-20 min-h-[calc(100vh-64px)] xl:min-h-[600px] flex items-center border-b border-gray-50/10">
+    <div class="absolute inset-0 bg-[radial-gradient(circle,#ffffff10_1px,transparent_1px)] bg-[size:16px_16px]"></div>
+    <div class="container mx-auto px-6 text-center relative">
 
-        {% if audio_path %}
-            <audio controls>
-            <source src="{{ url_for('static', filename='downloads/' ~ session_id ~ '/input-trimmed-audio.mp3') }}" type="audio/wav">
-                Your browser does not support the audio element.
-            </audio>
-        {% endif %}
+        <h1 class="text-4xl md:text-5xl xl:text-6xl font-bold mb-4 text-white">
+            AI Video Translator – English to Bangla
+        </h1>
+        <p class="mb-6 text-lg text-gray-300">
+            Paste your video URL to translate speech, text & audio with AI—then play or download your results below.
+        </p>
+        <div class="md:max-w-4xl mx-auto">
+            <form action="/" method="post" class="flex flex-col sm:flex-row gap-2 justify-center">
+                <input type="url" name="media_url" required placeholder="Enter video URL"
+                    class="w-full sm:w-auto flex-grow px-4 py-3 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500" />
+                <button id="translate-btn" type="submit"
+                    class="relative px-6 py-3 bg-indigo-600 text-white font-semibold rounded hover:bg-indigo-700 transition flex items-center justify-center">
 
+                    <span id="btn-text">Translate</span>
 
-        {% if bn_text %}
-            <h2>Bangla translation:</h2>
-            <p>{{ bn_text }}</p>
-        {% endif %}
+                    <!-- Spinner hidden by default -->
+                    <svg id="btn-spinner" class="hidden absolute h-5 w-5 animate-spin text-white"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                </button>
 
-        {% if bn_audio_path %}
-        {{ bn_audio_path }}
-            <audio controls>
-            <source src="{{ url_for('static', filename='downloads/' ~ session_id ~ '/output_audio.wav') }}"
-                    type="audio/wav">
-            Your browser doesn’t support audio.
-            </audio>
-        {% endif %}
-        {% if session_id %}
-            <video width="640" controls>
-                <source src="{{ url_for('static', filename='downloads/' + session_id + '/merged_output.mp4') }}" type="video/mp4">
-                Your browser doesn't support the video tag.
-            </video>
-        {% endif %}
+            </form>
+            <p class="mt-2 text-xs text-gray-400 text-"><strong>Note:</strong> We translate the first 30 seconds. If
+                there are multiple voices, they’ll be merged into a single speaker.</p>
+
+            {% if error %}
+            <p class="text-red-700 text-lg py-6">{{ error }}</p>
+            {% endif %}
+        </div>
     </div>
-</body>
-</html>
+    {% if session_id %}
+    <div class="container mx-auto px-6 mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Original -->
+        <div class="bg-gray-800 rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold text-white mb-4">Original Video</h2>
+            {% if transcription %}
+            <h3 class="text-gray-300 font-medium">Transcript</h3>
+            <textarea readonly
+                class="w-full p-4 bg-gray-700 rounded resize-y min-h-[160px] text-gray-100">{{ transcription }}</textarea>
+            {% endif %}
+
+            <video controls class="w-full mt-4 rounded bg-black">
+                <source src="{{ url_for('static', filename='downloads/' ~ session_id ~ '/input-trimmed-video.mp4') }}"
+                    type="video/mp4">
+                Your browser doesn’t support video playback.
+            </video>
+            <a href="{{ url_for('static', filename='downloads/'~session_id~'/input-trimmed-video.mp4') }}"
+                download="Original_Video.mp4"
+                class="mt-6 px-6 py-3 block bg-purple-700 text-white text-center font-semibold rounded-lg hover:bg-purple-300 transition">
+                Download Original Video
+            </a>
+
+        </div>
+
+        <!-- Translated -->
+        <div class="bg-gray-800 rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold text-white mb-4">Translated Video</h2>
+            {% if bn_text %}
+            <h3 class="text-gray-300 font-medium">Bangla Translation</h3>
+            <textarea readonly
+                class="w-full p-4 bg-gray-700 rounded resize-y min-h-[160px] text-gray-100">{{ bn_text }}</textarea>
+            {% endif %}
+
+            <video controls class="w-full mt-4 rounded bg-black">
+                <source src="{{ url_for('static', filename='downloads/' ~ session_id ~ '/merged_output.mp4') }}"
+                    type="video/mp4">
+                Your browser doesn’t support video playback.
+            </video>
+
+            <a href="{{ url_for('static', filename='downloads/'~session_id~'/merged_output.mp4') }}"
+                download="translated_video.mp4"
+                class="mt-6 px-6 py-3 block bg-purple-700 text-white text-center font-semibold rounded-lg hover:bg-purple-300 transition">
+                Download Translated Video
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</section>
+
+<!-- Start: How it works -->
+ 
+<section class="py-20 container mx-auto px-6 text-gray-400">
+    <h2 class="text-5xl font-bold text-center mb-12 text-white">How It Works</h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 2xl:grid-cols-6 gap-6 text-center">
+      <!-- Step 1 -->
+      <div>
+        <div class="text-4xl font-bold text-indigo-400 mb-2">1</div>
+        <h3 class="text-xl text-gray-200 font-semibold mb-1">Paste Video URL</h3>
+        <p class="text-sm">
+          Copy a YouTube or video link to start the process.
+        </p>
+      </div>
+
+      <!-- Step 2 -->
+      <div>
+        <div class="text-4xl font-bold text-indigo-400 mb-2">2</div>
+        <h3 class="text-xl text-gray-200 font-semibold mb-1">Extract Audio (30 s)</h3>
+        <p class="text-sm">
+          We trim and extract the first 30 seconds automatically.
+        </p>
+      </div>
+
+      <!-- Step 3 -->
+      <div>
+        <div class="text-4xl font-bold text-indigo-400 mb-2">3</div>
+        <h3 class="text-xl text-gray-200 font-semibold mb-1">Transcribe (Whisper‑small)</h3>
+        <p class="text-sm">
+          English speech converted to text using OpenAI Whisper‑small.
+        </p>
+      </div>
+
+      <!-- Step 4 -->
+      <div>
+        <div class="text-4xl font-bold text-indigo-400 mb-2">4</div>
+        <h3 class="text-xl text-gray-200 font-semibold mb-1">Translate (EN→BN NMT)</h3>
+        <p class="text-sm">
+          Translated into Bengali using our finetuned model.
+        </p>
+      </div>
+
+      <!-- Step 5 -->
+      <div>
+        <div class="text-4xl font-bold text-indigo-400 mb-2">5</div>
+        <h3 class="text-xl text-gray-200 font-semibold mb-1">Generate BN Audio (VITS‑male)</h3>
+        <p class="text-sm">
+          Bengali text converted to speech with our VITS‑male model.
+        </p>
+      </div>
+
+      <!-- Step 6 -->
+      <div>
+        <div class="text-4xl font-bold text-indigo-400 mb-2">6</div>
+        <h3 class="text-xl text-gray-200 font-semibold mb-1">Merge & Download</h3>
+        <p class="text-sm">
+          We merge audio with your video—watch or download instantly.
+        </p>
+      </div>
+    </div>
+  </section>
+<!-- End: How it works -->
+
+
+{% endblock %}

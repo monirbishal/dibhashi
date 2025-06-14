@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title or "AI Video Translator" }}</title>
+    <link href="{{ url_for('static', filename='dist/output.css') }}" rel="stylesheet">
+</head>
+
+<body class="flex flex-col min-h-[calc(100vh-64px)] bg-gray-900">
+
+    {% include 'header.html' %}
+    <main class="mt-[64px] flex-grow overflow-auto">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="border-t border-gray-50/10 text-center">
+        <div class="py-4 container mx-auto">
+            <p class="text-gray-400">
+                © {{ current_year }} Dibhashi
+            </p>
+        </div>
+    </footer>
+    <script>
+        document.getElementById('translate-btn')?.addEventListener('click', function () {
+            document.getElementById('btn-text').classList.add('invisible');
+            document.getElementById('btn-spinner').classList.remove('hidden');
+        });
+    </script>
+
+</body>
+
+</html>

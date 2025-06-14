@@ -37,8 +37,8 @@ def index():
                     if transcription:
                         bn_text = en_to_bn(transcription)
                         if bn_text:
-                            bn_audio_path = bangla_text_to_speech(bn_text, output_dir)
-                            # bn_audio_path = custom_tts(bn_text, output_dir, audio_path)
+                            # bn_audio_path = bangla_text_to_speech(bn_text, output_dir)
+                            bn_audio_path = custom_tts(bn_text, output_dir, audio_path)
                             if bn_audio_path:
                                 merge_audio_video(session_id)
                             else:
