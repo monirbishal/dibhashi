@@ -1,0 +1,55 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<section class="relative text-gray-400 py-20 md:min-h-[calc(100vh-64px)] lg:min-h-[600px] flex flex-col justify-center items-center border-b border-gray-50/10">
+    <div class="absolute inset-0 -z-[1] bg-[radial-gradient(circle,#ffffff10_1px,transparent_1px)] bg-[size:16px_16px]"></div>
+    <div class="container mx-auto px-6 text-center relative">
+
+        <h1 class="text-3xl md:text-5xl xl:text-6xl font-bold mb-4 text-white">
+            Traning Our AI Model
+        </h1>
+        <p class="mb-6 text-lg text-gray-300">
+            Paste your video URL to translate speech, text & audio with AI—then play or download your results below.
+        </p>
+        <div class="md:max-w-4xl mx-auto">
+            <form action="/traning" method="post" class="flex flex-col sm:flex-row gap-2 justify-center">
+                <input type="url" name="media_url" required placeholder="Enter video URL"
+                    class="w-full sm:w-auto flex-grow px-4 py-3 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500" />
+                <button id="translate-btn" type="submit"
+                    class="relative px-6 py-3 bg-indigo-600 text-white font-semibold rounded hover:bg-indigo-700 transition flex items-center justify-center">
+
+                    <span id="btn-text">Translate</span>
+
+                    <!-- Spinner hidden by default -->
+                    <svg id="btn-spinner" class="hidden absolute h-5 w-5 animate-spin text-white"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                </button>
+
+            </form>
+            <p class="mt-2 text-xs text-gray-400 text-"><strong>Note:</strong> We translate the first 30 seconds. If
+                there are multiple voices, they’ll be merged into a single speaker.</p>
+
+            {% if error %}
+            <p class="text-red-700 text-lg py-6">{{ error }}</p>
+            {% endif %}
+        </div>
+    </div>
+    {% if session_id %}
+    <div class="container mx-auto px-6 mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="bg-gray-800 rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold text-white mb-4">Audio to Text</h2>
+            {% if transcription %}
+            <h3 class="text-gray-300 font-medium mb-2">Transcript</h3>
+            <textarea readonly
+                class="w-full p-4 bg-gray-700 rounded resize-y min-h-[160px] text-gray-100">{{ transcription }}</textarea>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</section>
+
+
+{% endblock %}

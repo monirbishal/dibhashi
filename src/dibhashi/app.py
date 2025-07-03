@@ -6,6 +6,7 @@ from dibhashi.utils.translation import en_to_bn
 from dibhashi.utils.synthesis import bangla_text_to_speech
 from dibhashi.utils.merge import merge_audio_video
 from dibhashi.utils.utils import make_session_output_dir, get_session_id
+from dibhashi.utils.traning import traning_model
 import uuid
 import os
 from dotenv import load_dotenv
@@ -84,7 +85,7 @@ def bn_audio():
     session_id = get_session_id()
     output_dir = make_session_output_dir(session_id)
     reference_audio_path = "src/dibhashi/static/downloads/fa436f1ee5324122b372a8b7d9ec721a/input-trimmed-audio.mp3"
-    bn_text = "তুমি এখনও রোবটের মত ইংরেজি কেন বলছ ? আজকের দিনে অনেক বড় প্রযুক্তি , এ্যাপ , জিপিটি আছে , যা তোমাকে ভাষা শিখতে সাহায্য করতে পারে । কিন্তু তারা তোমাকে স্বতঃস্ফূর্ত করে তুলতে পারে না । একমাত্র উপায় হচ্ছে স্বতঃস্ফূর্ত হওয়া । তাই আমি আপনাকে দেখানোর জন্য একটি উপস্থাপনা তৈরি করেছি । এটি সংক্ষিপ্ত ও দ্রুত কিভাবে করতে হবে । এবং তারপর আমি একটি প্রোগ্রাম আছে যেখানে আপনি পারেন ।"
+    bn_text = "তোমার ইংরেজি এখনও কেন রোবটের মতো শোনায়? আজকের দিনে দুর্দান্ত কিছু টুল—অ্যাপ, ChatGPT—আছে যা ভাষা শিখতে সাহায্য করে। কিন্তু এগুলো তোমাকে সাবলীল করে তুলবে না। সাবলীল হতে হলে প্রকৃত মানুষদের সঙ্গে কথোপকথন চর্চা করতে হবে। এজন্য আমি একটি প্রেজেন্টেশন তৈরি করেছি তোমাকে দেখানোর জন্য। এটা সংক্ষিপ্ত ও স্পষ্ট, এবং এটি তোমাকে দ্রুত শিখতে শেখাবে।"
     # bn_audio_path = bangla_text_to_speech(bn_text, output_dir)
     bn_audio_path = custom_tts(bn_text, output_dir, reference_audio_path)
     # return bn_audio_path
@@ -101,6 +102,35 @@ def watch(session_id):
     merged_path = merge_audio_video(session_id)
     # return merged_path
     return render_template('index.html', session_id=session_id)
+
+@app.route('/traning', methods=['GET', 'POST'])
+def traning():
+    error = ""
+    if request.method == 'POST':
+        media_url = request.form.get('media_url')
+        if media_url:
+            try:
+                audio_path = ""
+                session_id = get_session_id()
+                output_dir = make_session_output_dir(session_id)
+                media_path = download_and_trim_media(media_url, output_dir, duration=120)
+                if media_path['audio']:
+                    audio_path = media_path['audio']
+                    transcription = transcribe_audio(audio_path)
+                else:
+                    error = "Error during download."
+                return render_template('traning.html', error=error,  session_id=session_id, transcription=transcription)
+            except Exception as e:
+                error = f'Error: {str(e)}'
+                return render_template('traning.html', error=error)
+        else:
+            error="No YouTube URL provided."
+    else:
+        return render_template('traning.html', error=error)
+    
+@app.route('/traning-model')
+def traningModel():
+    traning_model()
 
 
 def main():
