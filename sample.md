@@ -12,3 +12,6 @@ Data collection:
 3. https://www.thedailystar.net/ - Hridoy
 4. https://www.tbsnews.net/ - Emdad
 5. https://www.bssnews.net/ - Emon
+6. https://www.parabaas.com/article.php?id=5507
+7. https://tatoeba.org/en/downloads?utm_source=chatgpt.com - Sentence-pairs-in-English-Bengali-data.json
+8. https://huggingface.co/datasets/csebuetnlp/BanglaNMT - banglanmt_data.json
