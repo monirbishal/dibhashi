@@ -1,28 +1,28 @@
-[project]
+[tool.poetry]
 name = "dibhashi"
 version = "0.1.0"
-description = ""
-authors = [
-    {name = "monirbishal",email = "monirbishal1@gmail.com"}
-]
+description = "Dibhashi is an end-to-end AI-powered platform designed to dub English videos into Bangla."
+authors = ["Monir Hossain <monirbishal1@gmail.com>"]
 readme = "README.md"
-requires-python = ">=3.11,<3.12"
-dependencies = [
-    "flask (>=3.1.1,<4.0.0)",
-    "pytube (>=15.0.0,<16.0.0)",
-    "ffmpeg (>=1.4,<2.0)",
-    "yt-dlp (>=2025.5.22,<2026.0.0)",
-    "torch (>=2.7.0,<3.0.0)",
-    "sentencepiece (>=0.2.0,<0.3.0)",
-    "sacremoses (>=0.1.1,<0.2.0)",
-    "banglatts (>=0.0.3,<0.0.4)",
-    "tts (>=0.22.0,<0.23.0)",
-    "python-dotenv (>=1.1.0,<2.0.0)",
-    "evaluate (>=0.4.3,<0.5.0)",
-]
+license = "Apache-2.0"
+keywords = ["tts", "bangla", "speech", "flask", "ai", "nlp", "english to bangla dubbing"]
+homepage = "https://dibhashi.monirbishal.com"
+repository = "https://github.com/monirbishal/dibhashi"
+documentation = "https://dibhashi.monirbishal.com/docs"
+packages = [{ include = "dibhashi", from = "src" }]
 
-[tool.poetry]
-packages = [{include = "dibhashi", from = "src"}]
+[tool.poetry.dependencies]
+python = ">=3.11,<3.12"
+flask = ">=3.1.1,<4.0.0"
+pytube = ">=15.0.0,<16.0.0"
+yt-dlp = ">=2025.5.22,<2026.0.0"
+torch = ">=2.7.0,<3.0.0"
+sentencepiece = ">=0.2.0,<0.3.0"
+sacremoses = ">=0.1.1,<0.2.0"
+banglatts = ">=0.0.3,<0.0.4"
+tts = ">=0.22.0,<0.23.0"
+python-dotenv = ">=1.1.0,<2.0.0"
+evaluate = ">=0.4.3,<0.5.0"
 
 [tool.poetry.scripts]
 my-script = "dibhashi.app:main"

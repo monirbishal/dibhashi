@@ -3,9 +3,52 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title or "AI Video Translator" }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
     <link href="{{ url_for('static', filename='dist/output.css') }}" rel="stylesheet">
+
+    <title>{{ title or "Dibhashi — English to Bangla Video Dubbing with AI" }}</title>
+    <meta name="description" content="Dibhashi is an AI‑powered platform that dubs English videos into natural‑sounding Bangla, preserving timing, emotion, and clarity." />
+    <meta name="keywords" content="English to Bangla, AI dubbing, Whisper ASR, Neural MT, Bangla TTS, video translation" />
+    <meta name="author" content="Monir Hossain" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.png') }}" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.png') }}" />
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/apple-touch-icon.png') }}" />
+    <link rel="manifest" href="{{ url_for('static', filename='images/site.webmanifest') }}" />
+    <meta name="theme-color" content="#ffffff" />
+
+    <!-- Android Chrome Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ url_for('static', filename='images/android-chrome-192x192.png') }}" />
+    <link rel="icon" type="image/png" sizes="512x512" href="{{ url_for('static', filename='images/android-chrome-512x512.png') }}" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Dibhashi — English to Bangla Video Dubbing with AI" />
+    <meta property="og:description" content="Transform English videos into natural‑sounding Bangla with our AI‑powered pipeline (ASR → NMT → TTS → FFmpeg)." />
+    <meta property="og:url" content="{{ url_for('index', _external=True) }}" />
+    <meta property="og:image" content="{{ url_for('static', filename='images/og-image-1200x630.png', _external=True) }}" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Diagram of Dibhashi’s ASR → Translation → TTS → Video pipeline" />
+
+    <!--
+    Copyright 2025 Monir Hossain
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    -->
 </head>
 
 <body class="flex flex-col min-h-[calc(100vh-64px)] bg-gray-900">

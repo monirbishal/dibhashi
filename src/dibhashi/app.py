@@ -1,3 +1,20 @@
+"""
+Copyright 2025 Monir Hossain
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+"""
+
+
 from flask import Flask, render_template, request
 from dibhashi.utils.download_media import download_and_trim_media
 from dibhashi.utils.bangla_tts import custom_tts
@@ -97,12 +114,6 @@ def getTts():
     output = custom_tts()
     return output
 
-@app.route('/watch/<session_id>')
-def watch(session_id):
-    merged_path = merge_audio_video(session_id)
-    # return merged_path
-    return render_template('index.html', session_id=session_id)
-
 @app.route('/traning', methods=['GET', 'POST'])
 def traning():
     error = ""
@@ -131,6 +142,14 @@ def traning():
 @app.route('/traning-model')
 def traningModel():
     traning_model()
+
+@app.route('/about', methods=['GET'])
+def about():
+    return render_template('about.html')
+
+@app.route('/docs', methods=['GET'])
+def docs():
+    return render_template('docs.html')
 
 
 def main():

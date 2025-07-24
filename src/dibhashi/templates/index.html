@@ -6,7 +6,7 @@
     <div class="container mx-auto px-6 text-center relative">
 
         <h1 class="text-3xl md:text-5xl xl:text-6xl font-bold mb-4 text-white">
-            AI Video Translator – English to Bangla
+            English to Bangla Video Dubbing with AI
         </h1>
         <p class="mb-6 text-lg text-gray-300">
             Paste your video URL to translate speech, text & audio with AI—then play or download your results below.
@@ -16,7 +16,7 @@
                 <input type="url" name="media_url" required placeholder="Enter video URL"
                     class="w-full sm:w-auto flex-grow px-4 py-3 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500" />
                 <button id="translate-btn" type="submit"
-                    class="relative px-6 py-3 bg-indigo-600 text-white font-semibold rounded hover:bg-indigo-700 transition flex items-center justify-center">
+                    class="relative cursor-pointer px-6 py-3 bg-indigo-600 text-white font-semibold rounded hover:bg-indigo-700 transition flex items-center justify-center">
 
                     <span id="btn-text">Translate</span>
 
@@ -27,7 +27,6 @@
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                     </svg>
                 </button>
-
             </form>
             <p class="mt-2 text-xs text-gray-400 text-"><strong>Note:</strong> We translate the first 30 seconds. If
                 there are multiple voices, they’ll be merged into a single speaker.</p>
@@ -48,7 +47,7 @@
                 class="w-full p-4 bg-gray-700 rounded resize-y min-h-[160px] text-gray-100">{{ transcription }}</textarea>
             {% endif %}
 
-            <video controls class="w-full mt-4 rounded bg-black">
+            <video controls class="w-full h-[450px] mt-4 rounded bg-black">
                 <source src="{{ url_for('static', filename='downloads/' ~ session_id ~ '/input-trimmed-video.mp4') }}"
                     type="video/mp4">
                 Your browser doesn’t support video playback.
@@ -70,7 +69,7 @@
                 class="w-full p-4 bg-gray-700 rounded resize-y min-h-[160px] text-gray-100">{{ bn_text }}</textarea>
             {% endif %}
 
-            <video controls class="w-full mt-4 rounded bg-black">
+            <video controls class="w-full h-[450px] mt-4 rounded bg-black">
                 <source src="{{ url_for('static', filename='downloads/' ~ session_id ~ '/merged_output.mp4') }}"
                     type="video/mp4">
                 Your browser doesn’t support video playback.

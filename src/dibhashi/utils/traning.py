@@ -17,7 +17,7 @@ def traning_model():
     model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
 
     # === Load new data JSON: [{"en": "...", "bn": "..."}]
-    new_ds = load_dataset("json", data_files="src/dibhashi/static/traning/data.json", field=None)["train"]
+    new_ds = load_dataset("json", data_files="src/dibhashi/static/traning-data/data.json", field=None)["train"]
 
     # === Tokenize new examples
     def preprocess(ex):
