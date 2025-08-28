@@ -27,7 +27,7 @@ from dibhashi.utils.traning import traning_model
 import uuid
 import os
 from dotenv import load_dotenv
-# Define the path to .env file
+
 env_path = os.path.join(os.path.dirname(__file__), '.env')
 load_dotenv(dotenv_path=env_path)
 
@@ -76,46 +76,8 @@ def index():
     else:
         return render_template('index.html', error=error)
 
-@app.route('/download', methods=['GET', 'POST'])
-def download():
-    media_url = "https://www.facebook.com/englishwithkrisamerikos/videos/786170160398864/"
-    session_id = uuid.uuid4().hex
-    download_dir = os.getenv("DOWNLOAD_DIR")
-    output_dir = download_dir + "/" + session_id
-    outputs = download_and_trim_media(media_url, output_dir)
-    return outputs
-
-@app.route('/transcribe', methods=['GET'])
-def transcribe():
-    audio_path = "src/dibhashi/static/downloads/fa436f1ee5324122b372a8b7d9ec721a/input-trimmed-audio.mp3"
-    transcription = transcribe_audio(audio_path)
-    return transcription
-
-@app.route('/translate', methods=['GET'])
-def translation():
-    en_text = "Why are you still speaking English like a robot? In today's world, there's so much great technology, apps, chat GPT that can help you learn the language. But they won't make you fluent. The only way to be fluent is to practice speaking with real people. So I've created a presentation that I want to show you. It is short and quick and will explain how to do this fast. And then I have a program where you can"
-    bn_text = en_to_bn(en_text)
-    return render_template('index.html', transcription=en_text, bn_text=bn_text)
-
-@app.route('/bn-text-to-audio', methods=['GET'])
-def bn_audio():
-    session_id = get_session_id()
-    output_dir = make_session_output_dir(session_id)
-    reference_audio_path = "src/dibhashi/static/downloads/fa436f1ee5324122b372a8b7d9ec721a/input-trimmed-audio.mp3"
-    bn_text = "তোমার ইংরেজি এখনও কেন রোবটের মতো শোনায়? আজকের দিনে দুর্দান্ত কিছু টুল—অ্যাপ, ChatGPT—আছে যা ভাষা শিখতে সাহায্য করে। কিন্তু এগুলো তোমাকে সাবলীল করে তুলবে না। সাবলীল হতে হলে প্রকৃত মানুষদের সঙ্গে কথোপকথন চর্চা করতে হবে। এজন্য আমি একটি প্রেজেন্টেশন তৈরি করেছি তোমাকে দেখানোর জন্য। এটা সংক্ষিপ্ত ও স্পষ্ট, এবং এটি তোমাকে দ্রুত শিখতে শেখাবে।"
-    # bn_audio_path = bangla_text_to_speech(bn_text, output_dir)
-    bn_audio_path = custom_tts(bn_text, output_dir, reference_audio_path)
-    # return bn_audio_path
-    return render_template('index.html', session_id=session_id, bn_text=bn_text, bn_audio_path=bn_audio_path)
-
-
-@app.route('/tts', methods=['GET'])
-def getTts():
-    output = custom_tts()
-    return output
-
-@app.route('/traning', methods=['GET', 'POST'])
-def traning():
+@app.route('/audio-to-text', methods=['GET', 'POST'])
+def audioToText():
     error = ""
     if request.method == 'POST':
         media_url = request.form.get('media_url')
@@ -130,18 +92,39 @@ def traning():
                     transcription = transcribe_audio(audio_path)
                 else:
                     error = "Error during download."
-                return render_template('traning.html', error=error,  session_id=session_id, transcription=transcription)
+                return render_template('audio-to-text.html', error=error, session_id=session_id, transcription=transcription)
             except Exception as e:
                 error = f'Error: {str(e)}'
-                return render_template('traning.html', error=error)
+                return render_template('audio-to-text.html', error=error)
         else:
-            error="No YouTube URL provided."
+            error="No URL provided."
     else:
-        return render_template('traning.html', error=error)
+        return render_template('audio-to-text.html', error=error)
     
-@app.route('/traning-model')
-def traningModel():
-    traning_model()
+@app.route('/translate-text-en-to-bn', methods=['GET', 'POST'])
+def translateTextEnToBn():
+    error = ""
+    if request.method == 'POST':
+        en_text = request.form.get('en_text')
+        if en_text:
+            try:
+                bn_text = en_to_bn(en_text)
+                if bn_text:
+                    return render_template('translate-en-to-bn.html', error=error, en_text=en_text, bn_text=bn_text)
+                else:
+                    error = "Error during translation."
+                return render_template('translate-en-to-bn.html', error=error, en_text=en_text,)
+            except Exception as e:
+                error = f'Error: {str(e)}'
+                return render_template('translate-en-to-bn.html', error=error)
+        else:
+            error="No text provide."
+    else:
+        return render_template('translate-en-to-bn.html', error=error)
+    
+# @app.route('/traning-model')
+# def traningModel():
+#     traning_model()
 
 @app.route('/about', methods=['GET'])
 def about():

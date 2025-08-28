@@ -1,0 +1,48 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <section class="relative text-gray-400 py-20 md:min-h-[calc(100vh-64px)] lg:min-h-[600px] flex flex-col justify-center items-center border-b border-gray-50/10">
+        <div class="absolute inset-0 -z-[1] bg-[radial-gradient(circle,#ffffff10_1px,transparent_1px)] bg-[size:16px_16px]"></div>
+        <div class="container mx-auto px-6 text-center relative">
+
+            <h1 class="text-3xl md:text-5xl xl:text-6xl font-bold mb-4 text-white">
+                Translate Text English → Bangla
+            </h1>
+            <p class="mb-6 text-lg text-gray-300">
+                Paste your english text and get bangla translation with our 
+                <a href="https://huggingface.co/monirbishal/en-bn-nmt" target="_blank" class="underline">en-bn-nmt</a> model.
+            </p>
+            <div class="grid md:grid-cols-2 gap-4 place-content-center mt-10">
+                <div class="">
+                    <form action="/translate-text-en-to-bn" method="post" class="flex flex-col gap-2">
+                        <textarea name="en_text" rows="10" class="w-full sm:w-auto flex-grow px-4 py-3 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500" placeholder="Enter english text" required></textarea>
+                        <button id="translate-btn" type="submit"
+                            class="relative px-6 py-3 cursor-pointer bg-indigo-600 text-white font-semibold rounded hover:bg-indigo-700 transition flex items-center justify-center">
+
+                            <span id="btn-text">Translate</span>
+
+                            <!-- Spinner hidden by default -->
+                            <svg id="btn-spinner" class="hidden absolute h-5 w-5 animate-spin text-white"
+                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                            </svg>
+                        </button>
+                    </form>
+                    {% if error %}
+                    <p class="text-red-700 text-lg py-6">{{ error }}</p>
+                    {% endif %}
+                </div>
+                {% if bn_text %}
+                    <div class="flex flex-col gap-2">
+                        <textarea name="en_text" id="bn_text" readonly rows="10" class="w-full sm:w-auto flex-grow px-4 py-3 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500">{{ bn_text }}</textarea>
+                        <button onclick="copyTextFromDiv('bn_text')"
+                            class="relative px-6 py-3 cursor-pointer bg-purple-700 text-white font-semibold rounded hover:bg-purple-300 transition flex items-center justify-center">
+                            Copy Text
+                        </button>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

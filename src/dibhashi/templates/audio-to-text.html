@@ -1,0 +1,98 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <section class="relative text-gray-400 py-20 md:min-h-[calc(100vh-64px)] lg:min-h-[600px] flex flex-col justify-center items-center border-b border-gray-50/10">
+        <div class="absolute inset-0 -z-[1] bg-[radial-gradient(circle,#ffffff10_1px,transparent_1px)] bg-[size:16px_16px]"></div>
+        <div class="container mx-auto px-6 text-center relative">
+
+            <h1 class="text-3xl md:text-5xl xl:text-6xl font-bold mb-4 text-white">
+                Audio → Text Conversion
+            </h1>
+            <p class="mb-6 text-lg text-gray-300">
+                Paste your video URL above to generate a transcript using AI-powered speech recognition.
+            </p>
+            <div class="md:max-w-4xl mx-auto">
+                <form action="/audio-to-text" method="post" class="flex flex-col sm:flex-row gap-2 justify-center">
+                    <input type="url" name="media_url" required placeholder="Enter video URL"
+                        class="w-full sm:w-auto flex-grow px-4 py-3 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500" />
+                    <button id="translate-btn" type="submit"
+                        class="relative px-6 py-3 cursor-pointer bg-indigo-600 text-white font-semibold rounded hover:bg-indigo-700 transition flex items-center justify-center">
+
+                        <span id="btn-text">Translate</span>
+
+                        <!-- Spinner hidden by default -->
+                        <svg id="btn-spinner" class="hidden absolute h-5 w-5 animate-spin text-white"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                        </svg>
+                    </button>
+
+                </form>
+                <p class="mt-2 text-xs text-gray-400 text-"><strong>Note:</strong> We translate the first 30 seconds. If
+                    there are multiple voices, they’ll be merged into a single speaker.</p>
+
+                {% if error %}
+                <p class="text-red-700 text-lg py-6">{{ error }}</p>
+                {% endif %}
+            </div>
+        </div>
+        {% if session_id %}
+        <div class="container mx-auto px-6 mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+                <video controls class="w-full h-[450px] rounded bg-black">
+                <source src="{{ url_for('static', filename='downloads/' ~ session_id ~ '/input-trimmed-video.mp4') }}"
+                    type="video/mp4">
+                Your browser doesn’t support video playback.
+            </video>
+            </div>
+            <div class="bg-gray-800 rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold text-white mb-4">Transcript</h2>
+                {% if transcription %}
+                <div class="w-full p-4 bg-gray-700 rounded min-h-[250px] text-gray-100" id="transcription">{{ transcription }}</div>
+                <button onclick="copyTextFromDiv('transcription')"
+                    class="mt-6 px-6 py-3 block bg-purple-700 text-white cursor-pointer text-center font-semibold rounded-lg hover:bg-purple-300 transition">
+                    Copy Text
+                </button>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </section>
+
+<!-- Start: How it works -->
+ 
+<section class="py-20 container mx-auto px-6 text-gray-400">
+    <h2 class="text-5xl font-bold text-center mb-12 text-white">How It Works</h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 2xl:grid-cols-6 gap-6 text-center">
+      <!-- Step 1 -->
+      <div>
+        <div class="text-4xl font-bold text-indigo-400 mb-2">1</div>
+        <h3 class="text-xl text-gray-200 font-semibold mb-1">Paste Video URL</h3>
+        <p class="text-sm">
+          Copy a YouTube or video link to start the process.
+        </p>
+      </div>
+
+      <!-- Step 2 -->
+      <div>
+        <div class="text-4xl font-bold text-indigo-400 mb-2">2</div>
+        <h3 class="text-xl text-gray-200 font-semibold mb-1">Extract Audio (30 s)</h3>
+        <p class="text-sm">
+          We trim and extract the first 30 seconds automatically.
+        </p>
+      </div>
+
+      <!-- Step 3 -->
+      <div>
+        <div class="text-4xl font-bold text-indigo-400 mb-2">3</div>
+        <h3 class="text-xl text-gray-200 font-semibold mb-1">Transcribe (Whisper‑small)</h3>
+        <p class="text-sm">
+          English speech converted to text using OpenAI Whisper‑small.
+        </p>
+      </div>
+    </div>
+  </section>
+<!-- End: How it works -->
+{% endblock %}
