@@ -1,0 +1,39 @@
+# Core Flask dependencies
+flask==3.1.1
+werkzeug==3.1.3
+jinja2==3.1.6
+click==8.1.8
+itsdangerous==2.2.0
+markupsafe==3.0.2
+blinker==1.9.0
+
+# Essential utilities
+python-dotenv==1.1.0
+requests==2.32.3
+numpy==1.26.4
+
+# Lightweight audio/video processing
+pytube==15.0.0
+yt-dlp==2025.5.22
+
+# Basic text processing
+nltk==3.9.1
+sentencepiece==0.2.0
+
+# CPU-only PyTorch (much lighter than GPU version)
+torch==2.7.0 --index-url https://download.pytorch.org/whl/cpu
+
+# Essential transformers (will download models on demand)
+transformers==4.52.4
+tokenizers==0.21.1
+safetensors==0.5.3
+huggingface-hub==0.32.4
+
+# Lightweight Bangla support
+bangla==0.0.5
+bnunicodenormalizer==0.1.7
+
+# Skip these heavy libraries for now:
+# banglatts==0.0.3  # Heavy TTS library
+# librosa==0.11.0   # Heavy audio processing
+# tts==0.22.0       # Heavy TTS framework

@@ -136,7 +136,13 @@ def docs():
 
 
 def main():
-    app.run(host="0.0.0.0", port=5002, debug=True)
+    # Production vs Development configuration
+    import os
+    debug_mode = os.getenv('FLASK_DEBUG', 'False').lower() == 'true'
+    port = int(os.getenv('PORT', 5002))
+    host = os.getenv('HOST', '0.0.0.0')
+    
+    app.run(host=host, port=port, debug=debug_mode)
 
 if __name__ == '__main__':
     main()
